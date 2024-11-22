@@ -1,5 +1,8 @@
 import pandas as pd
 import sqlite3
+from flask import jsonify
+
+DATABASE = 'database.db'
 
 def load_excel_file(df, stop_marker_1, stop_marker_2):
   
@@ -63,7 +66,6 @@ def load_excel_file(df, stop_marker_1, stop_marker_2):
   find_issues(formatted_df)
   
   formatted_df.drop(df.columns[columns_to_drop], axis=1, inplace=True)
-
 
   return formatted_df
 
@@ -160,8 +162,10 @@ def format_excel(data):
   for i, column_name in enumerate(data.columns[1:]):  # Iterate over remaining columns
       output_data[column_name] = [row[i] for row in other_columns]  # Add each column
 
+  
   # Переименовываем нужные столбцы
-  output_data.rename(columns={output_data.columns[5]: 'Лекции', 
+  output_data.rename(columns={output_data.columns[4]: 'Noname',
+                              output_data.columns[5]: 'Лекции', 
                               output_data.columns[7]: 'Практические', 
                               output_data.columns[8]: 'Лабы'}, inplace=True)
 
@@ -170,9 +174,9 @@ def format_excel(data):
   
   return output_data
 
-def excel_to_sql(output_data):
+def excel_to_sql(DATABASE, output_data):
   
-  conn = sqlite3.connect('/Users/kalek/Desktop/Учеба/Информатика/Проект АЯП/database.db')
+  conn = sqlite3.connect(DATABASE)
   cursor = conn.cursor()
 
   # Drop tables if they already exist to reset them
@@ -246,8 +250,14 @@ def excel_to_sql(output_data):
 
   # Commit changes and close the database connection
   conn.commit()
+  # Возвращаем список преподавателей для отображения
+  cursor.execute("SELECT название_дисциплины, id_семестра, id_группы, 'Сту\nден\nтов', Лекции, Практические, Лабы, 'В\nс\nе\nг\nо'  FROM Дисциплины")
+  disciplines = [{'название_дисциплины': row[0], 'id_семестра': row[1], 'id_группы': row[2], 'Сту\nден\nтов': row[3], 'Лекции': row[4], 'Практические': row[5], 'Лабы': row[6], 'В\nс\nе\nг\nо': row[7] or 0} for row in cursor.fetchall()]
+    
   conn.close()
-  return
+    
+  return jsonify({'disciplines': disciplines})
+
 
 stop_marker_1 = [ 'Факультет 1', 'очная форма обучения, Бакалавриат', 'очная форма обучения, Специализированное высшее образование', 'очная форма обучения, Специалитет', 'Факультет 3', 'очная форма обучения, Аспирантура', 'очная форма обучения, Базовое высшее образование', 'Факультет 6', 'Факультет 7', 'очно-заочная форма обучения, Специалитет', 'Факультет 9', 'Весенний семестр' ]
 stop_marker_2 = [ 'Факультет 1', 'очная форма обучения, Бакалавриат', 'очная форма обучения, Специализированное высшее образование', 'очная форма обучения, Специалитет', 'Факультет 3', 'очная форма обучения, Аспирантура', 'очная форма обучения, Базовое высшее образование', 'Факультет 6', 'Факультет 7', 'очно-заочная форма обучения, Специалитет', 'Факультет 9', 'Осенний семестр' ]
@@ -261,6 +271,6 @@ if "__main__" == __name__:
   
   formatted_df = load_excel_file(df, stop_marker_1, stop_marker_2 )
   output_data = format_excel(formatted_df)
-  excel_to_sql(output_data)
+  excel_to_sql(DATABASE, output_data)
   
   print('Файл удачно загружен')
