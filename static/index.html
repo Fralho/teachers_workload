@@ -95,28 +95,6 @@
             });
         }
 
-        // Функция для отображения названия дисциплин
-        function displayDisciplines(disciplines) {
-            const container = document.getElementById('disciplineCards');
-            container.innerHTML = '';
-
-            disciplines.forEach(discipline => {
-                const card = document.createElement('div');
-                card.className = 'discipline-card';
-                card.style.backgroundColor = "white";
-                card.style.borderRadius = "4px";
-                card.style.margin = "8px 0";
-                card.style.padding = "10px";
-                card.dataset.name = discipline.название_дисциплины; // Добавляем data-name атрибут
-
-
-                card.innerHTML = `
-                    <p>${discipline.название_дисциплины}</p>
-                `;
-
-                container.appendChild(card);
-            });
-        }
 
         function loadDisciplines() {
             fetch('/upload_disciplines', {
