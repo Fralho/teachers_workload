@@ -96,6 +96,14 @@
         }
 
 
+        function updateColorDiscipline(card, discipline) {
+            // Проверяем значение id_семестра и устанавливаем цвет
+            if (discipline.id_семестра === 2) {
+                card.style.backgroundColor = "green"; // Зеленый цвет для id_семестра = 1
+            } else if (discipline.id_семестра === 1) {
+                card.style.backgroundColor = "orange"; // Оранжевый цвет для id_семестра = 0
+        }
+    }
         function loadDisciplines() {
             fetch('/upload_disciplines', {
                 method: 'POST',
@@ -112,31 +120,33 @@
         // Пример вызова функции при загрузке файла
         document.querySelector('#uploadButton').addEventListener('click', loadDisciplines);
 
-        // Функция для отображения названия дисциплин
         function displayDisciplines(disciplines) {
             const container = document.getElementById('disciplineCards');
-            const infoBlock = document.getElementById('disciplineCardHours');
-            container.innerHTML = '';
-
+            container.innerHTML = ''; // Очищаем контейнер перед добавлением новых карточек
+        
             disciplines.forEach(discipline => {
+                // Создаём карточку
                 const card = document.createElement('div');
                 card.className = 'discipline-card';
-                card.style.backgroundColor = "white";
                 card.style.borderRadius = "4px";
                 card.style.margin = "8px 0";
                 card.style.padding = "10px";
                 card.dataset.name = discipline.название_дисциплины; // Добавляем data-name атрибут
-
+                updateColorDiscipline(card, discipline);
+        
                 // Добавляем текст на карточку
                 card.innerHTML = `
                     <p>${discipline.название_дисциплины}</p>
                 `;
-
+        
+                // Устанавливаем цвет карточки в зависимости от id_семестра
+        
                 // Добавляем обработчик клика
                 card.addEventListener('click', () => {
-                    displayDisciplineInfo(discipline);
+                    displayDisciplineInfo(discipline); // Отображаем информацию о дисциплине
                 });
-
+        
+                // Добавляем карточку в контейнер
                 container.appendChild(card);
             });
         }

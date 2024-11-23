@@ -130,8 +130,8 @@ def upload_discipline_file():
     conn.commit()
 
     # Возвращаем данные из таблицы "Дисциплины" для отображения на клиенте
-    cursor.execute("SELECT название_дисциплины, Лекции, Практические, Лабы FROM Дисциплины")
-    disciplines = [{'название_дисциплины': row[0], 'Лекции': row[1], 'Практические': row[2], 'Лабы': row[3]} for row in cursor.fetchall()]
+    cursor.execute("SELECT название_дисциплины, Лекции, Практические, Лабы, id_семестра FROM Дисциплины")
+    disciplines = [{'название_дисциплины': row[0], 'Лекции': row[1], 'Практические': row[2], 'Лабы': row[3], 'id_семестра': row[4]} for row in cursor.fetchall()]
     conn.close()
 
     return jsonify({'disciplines': disciplines})
