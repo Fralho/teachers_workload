@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Нагрузка кафедры</title>
+    <style>
+body {
+  	margin: 0;
+	display: flex;
+   	justify-content: center;
+   	align-items: center;
+   	height: 100vh;
+   	background-color: #f0f0f0;
+   	overflow: hidden;
+}
+
+.container {
+   	width: calc(100% - 40px); 
+   	height: calc(100% - 40px); 
+}
+
+.large-frame {
+   	background-color: lightblue;
+   	padding: 20px; 
+   	box-sizing: border-box; 
+	height: 100%; 
+	background-color: rgb(200, 223, 253);
+	border: 2px solid rgb(18,5, 141);
+ 	border-radius: 30px;
+}
+
+.ts {
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 20px; 
+	height: calc(50% - 10px);
+	background-color: rgb(200, 223, 253);
+
+}
+
+.bs {
+	display: flex;
+    justify-content: space-between;
+    height: calc(50% - 10px);
+    background-color: rgb(200, 223, 253);
+}
+
+.tlist {
+    background-color: lightcoral;
+    width: calc(50% - 10px); 
+    height: calc(100%); 
+    background-color: white;
+    border-radius:30px;
+	border: 2px solid rgb(18,5, 141);
+}
+
+.cstlist {
+	width: 100%;
+	height: calc(100% - 20px);
+	border-radius: 30px;
+	background-color: white;
+	overflow-y: auto;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.teachcard {
+	display: flex;
+	margin: 10px;
+	background-color: white;
+	width: 95%;
+	height: 100%;
+	border-radius: 30px;
+	min-height: 190px;
+	border: 2px solid rgb(18,5, 141);
+}
+
+.lsteachcard {
+	display: flex;
+	justify-content: flex-start;
+	width: 50%;
+	height: 100%;
+}
+
+.rsteachcard {
+	display: flex;
+	justify-content: flex-start;
+	width: 50%;
+	height: 100%;
+}
+
+.teacherName {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-family: 'bahnschrift';
+	font-size: 20px;
+	color: rgb(18,5, 141);
+	width: 100%;
+	height: 100%;
+}
+
+.teacherhours {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-family: 'bahnschrift';
+	font-size: 20px;
+	color: rgb(18,5, 141);
+	width: 100%;
+	height: 100%;
+}
+
+
+.cstlist::-webkit-scrollbar {
+	width: 0px;
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+.tcard {
+    background-color: white;
+    width: calc(50% - 10px); 
+    height: calc(100%); 
+    display: none;
+    border-radius:30px;
+	border: 2px solid rgb(18,5, 141);
+}
+
+.plus-button {
+    width: calc(50% - 10px); 
+    height: calc(100%); 
+    background-color: rgb(78, 155, 255);
+    color: white;
+	border-radius:30px;
+	border: 2px solid rgb(18,5, 141);
+	font-size: 30px;
+	cursor: pointer;
+}
+
+.plus-button:hover {
+	border: 2px solid white;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.subjects {
+	background-color: white;
+    width: calc(25% - 10px); 
+    height: calc(100%); 
+    border-radius:30px;
+	border: 2px solid rgb(18,5, 141);
+	align-items: start;
+}
+
+.subsrch{
+	font-family: 'bahnschrift';
+	font-size: 25px;
+	line-height: 1.5;
+	color: grey;
+	background-clip: padding-box;
+	border-radius: 30px;
+	background-color: white;
+	border: 1px solid grey;
+	width: calc(90%);
+	height: calc(80%);
+
+
+}
+
+.tssub {
+	display: flex;
+	justify-content: center;
+	margin-bottom: 5px; 
+	height: calc(15% );
+	background-color: white;
+	align-items: center;
+	margin-top: 10px;
+	border-radius: 30px;
+
+}
+
+.bssub {
+	display: flex;
+	justify-content: center; 
+	height: calc(85% - 25px);
+	background-color: white;
+	align-items: center;
+	border-radius: 30px;
+}
+
+.subs {
+	width: calc(100%);
+	height: calc(100%);
+	background-color: white;
+	border-radius: 30px;
+	justify-content: center;
+}
+
+.subres {
+	width: calc(100%);
+	height: calc(100%);
+	background-color: white;
+	border-radius: 30px;
+	justify-content: center;
+	overflow-y: auto;
+}
+
+.subbut {
+	width: calc(90%);
+	font-family: 'bahnschrift';
+	font-size: 20px;
+	color: black;
+	background-color: rgb(224, 224, 224);
+	min-height: 50px; 
+	overflow-y: auto;
+	margin-top: 10px;
+	margin-left: calc(5%);
+	border-radius: 20px;
+}
+
+.subres::-webkit-scrollbar {
+	width: 0px;
+
+}
+
+.subbut:hover {
+	background-color: rgb(173, 173, 173);
+	text-decoration: none;
+	cursor: pointer;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+.extsubjects {
+	background-color: white;
+    width: calc(50% - 20px); 
+    height: calc(100%); 
+    border-radius:30px;
+	border: 2px solid rgb(18,5, 141);
+	display: none;
+	justify-content: space-between;
+	flex-direction: column;
+}
+
+.tsextsubs {
+	display: flex;
+	justify-content: center;
+	margin-bottom: 5px; 
+	height: calc(20% );
+	margin-top: 10px;
+	width: calc(100%);
+	border-radius: 30px;
+	background-color: white;
+}
+
+.msextsubs {
+	display: flex;
+	height: calc(100%);
+	width: calc(100%);
+	justify-content: center;
+	border-radius: 30px;
+	background-color: white;
+}
+
+.lsmsextsubs {
+	display: flex;
+	height: 100%;
+	background-color: white;
+	border-radius: 30px;
+	width: 100%;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.lectures {
+	height: 15%;
+	width: 90%;
+	display: flex;
+	background-color: white;
+	border-radius: 20px;
+	justify-content: center;
+	align-items: center;
+	font-family: 'bahnschrift';
+	font-size: 20px;
+	border: 2px solid rgb(18,5, 141);
+	color: rgb(18,5, 141);
+}
+
+.seminars {
+	height: 15%;
+	width: 90%;
+	display: flex;
+	background-color: white;
+	border-radius: 20px;
+	justify-content: center;
+	align-items: center;
+	font-family: 'bahnschrift';
+	font-size: 20px;
+	border: 2px solid rgb(18,5, 141);
+	color: rgb(18,5, 141);
+}
+
+.labs {
+	height: 15%;
+	width: 90%;
+	display: flex;
+	background-color: white;
+	border-radius: 20px;
+	justify-content: center;
+	align-items: center;
+	font-family: 'bahnschrift';
+	font-size: 20px;
+	border: 2px solid rgb(18,5, 141);
+	color: rgb(18,5, 141);
+}
+
+.csmsextsubs {
+	display: flex;
+	height: 100%;
+	background-color: white;
+	border-radius: 30px;
+	width: 100%;
+	margin-left: 10px;
+	margin-right: 10px;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.rsmsextsubs {
+	display: flex;
+	height: 100%;
+	background-color: white;
+	border-radius: 30px;
+	width: 100%;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.bsextsubs {
+	display: flex;
+	height: calc(15%);
+	width: calc(100%);
+	justify-content: flex-end;
+	margin-bottom: 10px;
+	border-radius: 30px;
+	background-color: white;
+}
+
+.extsubsname {
+	width: calc(70%);
+	height: calc(100%);
+	font-family: 'bahnschrift';
+	font-size: 20px;
+	text-align: center;
+	color: rgb(18,5, 141);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-top: 10px;
+}
+
+.groupextsubs {
+	height: 15%;
+	width: 90%;
+	display: flex;
+	background-color: white;
+	border-radius: 20px;
+	justify-content: center;
+	align-items: center;
+	font-family: 'bahnschrift';
+	font-size: 20px;
+	border: 2px solid rgb(18,5, 141);
+}
+
+.addsub {
+	height: 15%;
+	width: 90%;
+	display: flex;
+	background-color: white;
+	border-radius: 20px;
+	justify-content: center;
+	align-items: center;
+	font-family: 'bahnschrift';
+	font-size: 20px;
+	border: 2px solid rgb(18,5, 141);
+	margin-bottom: 10px;
+	margin-top: 10px;
+	color: rgb(18,5, 141);
+}
+
+.accept {
+	height: calc(100%);
+	width: calc(20%);
+	margin-right: 10px;
+	border-radius: 30px;
+	font-family: 'bahnschrift';
+	font-size: 20px;
+	text-align: center;
+	color: rgb(18,5, 141);
+	border: 2px solid rgb(18,5, 141);
+}
+
+
+
+
+
+
+
+
+
+.groupbut {
+	height: calc(100%);
+	width: calc(25%);
+	margin-right: 10px;
+	border-radius: 30px;
+	font-family: 'bahnschrift';
+	font-size: 20px;
+	text-align: center;
+	color: rgb(18,5, 141);
+	border: 2px solid rgb(18,5, 141);
+}
+
+.group {
+	height: calc(94%);
+	width: calc(25%);
+	margin-right: 10px;
+	border-radius: 30px;
+	font-family: 'bahnschrift';
+	font-size: 20px;
+	justify-content: center;
+	align-items: center;
+	color: rgb(18,5, 141);
+	border: 2px solid rgb(18,5, 141);
+	display: none;
+}
+
+.grbut {
+	width: 100%; 
+	min-height: 50px; 
+	margin: 5px 0; 
+	padding: 0; 
+	border-radius: 30px;
+	font-family: 'bahnschrift';
+	font-size: 20px;
+	color: rgb(18,5, 141);
+	background-color: rgb(200, 223, 253);
+	border: 2px solid rgb(18,5, 141);
+}
+
+.grwindow {
+	display: none; 
+	position: fixed;
+	z-index: 1;
+	left: 0;
+	top: 0;
+	width: calc(100%);
+	height: calc(100%);
+	overflow: auto;
+	background-color: rgba(0, 0, 0, 0.5); 
+}
+
+.grwindowcont {
+	background-color: #fefefe;
+	margin: auto;
+	padding: 20px; 
+	border: 1px solid #888;
+	width: 400px; 
+	height: 500px; 
+	position: absolute; 
+	top: 50%; 
+	left: 50%; 
+	transform: translate(-50%, -50%); 
+	border-radius: 30px; 
+	background-color: rgb(200, 223, 253);
+	border: 2px solid rgb(18,5, 141);
+	scroll-behavior: smooth;
+	display: flex;
+	flex-direction: column;
+}
+
+.grwcts {
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 20px; 
+	height: calc(10%);
+	width: calc(100%);
+	background-color: rgb(200, 223, 253);
+	border-radius: 30px;
+}
+
+.grwcbs {
+	display: flex;
+	justify-content: center;
+	height: calc(90% - 30px);
+	width: calc(100%);
+	background-color: rgb(200, 223, 253);
+	border-radius: 30px;
+}
+
+.grsrch {
+	display: flex;
+	height: calc(100%);
+	width: calc(100%);
+	border-radius: 30px;
+}
+
+.grres {
+	display: flex;
+	height: 100%;
+	width: 100%;
+	flex-direction: column;
+	overflow-y: auto;
+}
+
+
+
+.grres::-webkit-scrollbar {
+	width: 0px;
+
+}
+
+.accept:hover {
+	background-color: rgb(170, 204, 249);
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.groupbut:hover {
+	background-color: rgb(170, 204, 249);
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.grbut:hover {
+	background-color: rgb(170, 204, 249);
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.addsub:hover {
+	background-color: rgb(170, 204, 249);
+	text-decoration: none;
+	cursor: pointer;
+}
+
+
+
+
+.indicators {
+	display: flex;
+	background-color: white;
+    width: calc(25% - 10px); 
+    height: calc(100%); 
+    border-radius:30px;
+	border: 2px solid rgb(18,5, 141);
+	flex-direction: column;
+	justify-content: flex-end;
+}
+
+.bsindicators {
+	display: flex;
+	border-radius: 30px;
+	width: 100%;
+	height: 30%;
+	background-color: white;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+
+
+
+
+.uploadbutton {
+	display: flex;
+	justify-content: center;
+	height: 50%;
+	width: 50%;
+	background-color: rgb(170, 204, 249);
+}
+
+.uploadButton_discipline {
+	display: flex;
+	width: 95%;
+	height: 50%;
+	background-color: white;
+	color: white;
+	margin: 10px;
+	border-radius: 20px;
+	font-family: 'bahnschrift';
+	font-size: 20px;
+	justify-content: center;
+	align-items: center;
+	color: rgb(18,5, 141);
+	border: 2px solid rgb(18,5, 141);
+}
+
+.uploadButton_teachers {
+	display: flex;
+	width: 95%;
+	height: 50%;
+	background-color: white;
+	color: white;
+	margin-bottom: 10px;
+	margin-left: 10px;
+	margin-right: 10px;
+	border-radius: 20px;
+	font-family: 'bahnschrift';
+	font-size: 20px;
+	justify-content: center;
+	align-items: center;
+	color: rgb(18,5, 141);
+	border: 2px solid rgb(18,5, 141);
+}
+
+.uploadButton_discipline:hover {
+	background-color: rgb(170, 204, 249);
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.uploadButton_teachers:hover {
+	background-color: rgb(170, 204, 249);
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.timage {
+	display: flex;
+	width: 149px;
+	height: 210px;
+	border: 1px solid rgb(18,5, 141);
+	border-radius: 30px;
+}
+
+.tABS {
+	background-image: url(images/Aleshin.jpg);
+}
+
+.tADA {
+	background-image: url(images/Antonov.jpg);
+}
+
+.tAAA {
+	background-image: url(images/Afonin.jpg);
+}
+
+.tVKK {
+	background-image: url(images/Veremeenko.jpg);
+}
+
+.tZMV {
+	background-image: url(images/Zharkov.jpg);
+}
+
+.tKLA {
+	background-image: url(images/Kolganov.jpg);
+}
+
+.tKBV {
+	background-image: url(images/Koshelev.jpg);
+}
+
+.tKIM {
+	background-image: url(images/Kuznetsov.jpg);
+}
+
+.tMUN {
+	background-image: url(images/Mishin.jpg);
+}
+
+.tNNM {
+	background-image: url(images/Man.jpg);
+}
+
+.tPAN {
+	background-image: url(images/Pronkin.jpg);
+}
+
+.tSDA {
+	background-image: url(images/Surkov.jpg);
+}
+
+.tUAN {
+	background-image: url(images/Ushakov.jpg);
+}
+
+.tHTS {
+	background-image: url(images/Horev.jpg);
+}
+
+.icon {
+	background-image: url(images/icon.jpg);
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="large-frame">
+            <div id="grwindow" class="grwindow">
+                <div id="grwindowcont" class="grwindowcont">
+                    <div id="grwcts" class="grwcts">
+                        <input class="grsrch" type="text" id="grsrch">
+                    </div>    
+                    <div id="grwcbs" class="grwcbs">    
+                        <div id="grres" class="grres"></div>
+                    </div>    
+                </div>
+            </div>
+            <div class="ts">
+                <!--<button class="plus-button" id="tchoose">+</button>-->
+				<select class="plus-button" id="teacherSelect" style="padding: 5px; width: 200px;">
+					<option value="">Выберите преподавателя</option>
+				</select>
+                <div class="tcard"></div>
+                <div class="tlist" id="tlist">
+					<div class="cstlist" id="cstlist"></div>
+				</div>
+            </div>
+            <div class="bs">
+                <div class="subjects">
+                    <div class="tssub">
+                        <input class="subsrch" type="text" id="subsrch">
+                    </div>
+                    <div class="bssub">
+                        <div class="subs">
+                            <div id="subres" class="subres"></div>
+                        </div>
+                    </div> 
+                </div>
+                <div class="extsubjects" id="extsubjects">   
+                     
+                </div>
+                <div class="indicators">
+					<div class="bsindicators">
+                    	<button class="uploadButton_discipline" id="uploadButton_discipline">Загрузить дисциплины</button>
+						<button class="uploadButton_teachers" id="uploadButton_teachers">Загрузить преподавателей</button>
+					</div>	
+					<form id="uploadTeach"> 
+                        <input type="file" id="fileInput_teachers" style="display: none;" accept=".xlsx"> 
+                    </form>
+                    <form id="uploadForm"> 
+                        <input type="file" id="fileInput_discipline" style="display: none;" accept=".xlsx"> 
+                    </form>   
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+        
+        
+<script>
+const subsrch = document.getElementById("subsrch");
+const extsubjects = document.getElementById("extsubjects");
+const accept = document.getElementById("accept");
+const groupbut = document.getElementById("groupbut");
+const grwindow = document.getElementById("grwindow");
+const grsrch = document.getElementById("grsrch");
+const group = document.getElementById("group");
+// Глобальный объект для хранения данных всех дисциплин
+const disciplineData = {};
+const grs = [
+    "М1О-412Б-21",	
+    "М1О-414Бки-21",
+    "М1О-415Бки-21",	
+    "М1О-421Б-21",	
+    "М1О-419Бки-21",	
+    "М1О-425Бки-21",	
+    "М1О-412Б-21",	
+    "М1О-414Бки-21",
+    "М1О-415Бки-21",	
+    "М1О-421Б-21",	
+    "М1О-419Бки-21",	
+    "М1О-425Бки-21",
+];
+
+
+
+
+function grtrans(text) {
+    group.textContent += text; 
+    grwindow.style.display = "none";
+    group.style.display = "flex";
+    groupbut.textContent = "Изменить группу"
+};
+
+function acception() {
+    extsubsname.textContent = ""; 
+    extsubjects.style.display = "none";
+    group.textContent = '';
+    group.style.display = "none";
+    groupbut.textContent = "Выбрать группу"
+};
+
+function grchoose() {
+    grwindow.style.display = "flex";
+    group.textContent = '';
+    group.style.display = "none";
+};
+
+window.onclick = function(event) {
+    if (event.target === grwindow) {
+        grwindow.style.display = "none";
+        groupbut.textContent = "Выбрать группу"  
+    }
+};
+
+grs.forEach( item => {
+    const button = document.createElement('button');
+    button.className = 'grbut';
+    button.textContent = item;
+    button.onclick = () => grtrans(item);
+    grres.appendChild(button);
+});
+
+
+
+grsrch.addEventListener('input', function() {
+    const query = grsrch.value.toLowerCase();
+    grres.innerHTML = '';
+
+    const filteredgrs = grs.filter(item => item.toLowerCase().includes(query));
+
+    filteredgrs.forEach(item => {
+        const button = document.createElement('button');
+        button.className = 'grbut';
+        button.textContent = item;
+        button.onclick = () => grtrans(item);
+        grres.appendChild(button);
+    });
+});
+
+// Получаем элементы DOM
+const subres = document.getElementById("subres");
+
+// Функция для получения текущих значений из элементов с классом 'subbut'
+function getDisciplinesFromSubres() {
+    const buttons = subres.querySelectorAll('.subbut');
+    return Array.from(buttons).map(button => button.textContent.trim());
+}
+
+// Функция фильтрации и отображения результатов
+function filterDisciplines(query) {
+    const buttons = subres.querySelectorAll('.subbut');
+    buttons.forEach(button => {
+        const text = button.textContent.toLowerCase();
+        // Скрываем или показываем элементы в зависимости от совпадения
+        if (text.includes(query)) {
+            button.style.display = ''; // Показываем элемент
+        } else {
+            button.style.display = 'none'; // Скрываем элемент
+        }
+        button.onclick = () => openextsubs(button.textContent);
+    });
+}
+
+// Обработчик события ввода текста в поле поиска
+subsrch.addEventListener('input', function () {
+    const query = subsrch.value.toLowerCase(); // Приводим введённый текст к нижнему регистру
+    filterDisciplines(query); // Фильтруем элементы
+});
+
+// Инициализация: вывод всех элементов (если необходимо)
+(function init() {
+    const disciplines = getDisciplinesFromSubres();
+    console.log('Текущие дисциплины:', disciplines); // Для отладки
+})();
+
+
+
+
+// Загрузка файла дисциплин
+document.getElementById('uploadButton_discipline').addEventListener('click', () => {
+            document.getElementById('fileInput_discipline').click();
+        });
+
+        document.getElementById('fileInput_discipline').addEventListener('change', async function() {
+            const file = this.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const response = await fetch('/upload_disciplines', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+            displayDisciplines(data.disciplines);
+        });
+
+
+        function loadDisciplines() {
+            fetch('/upload_disciplines', {
+                method: 'POST',
+                body: new FormData(document.querySelector('#uploadForm'))
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const disciplines = data.disciplines;
+                    displayDisciplines(disciplines);
+                })
+                .catch(error => console.error('Ошибка:', error));
+        }
+
+        console.log(document.querySelector('#uploadForm'));
+
+
+        // Пример вызова функции при загрузке файла
+        document.getElementById('uploadButton_discipline').addEventListener('click', loadDisciplines);
+
+        function displayDisciplines(disciplines) {
+            const subres = document.getElementById('subres');
+            subres.innerHTML = ''; // Очищаем контейнер перед добавлением новых карточек
+        
+            disciplines.forEach(discipline => {
+                // Создаём карточку
+                const button = document.createElement('button');
+                button.className = 'subbut';
+                //button.onclick = () => openextsubs(discipline);
+                button.dataset.name = discipline.название_дисциплины; // Добавляем data-name атрибут
+                updateColorDiscipline(button, discipline);
+        
+                // Добавляем текст на карточку
+                button.innerHTML = `
+                    <p>${discipline.название_дисциплины}</p>
+                `;
+        
+                // Устанавливаем цвет карточки в зависимости от id_семестра
+        
+                // Добавляем обработчик клика
+                button.addEventListener('click', () => {
+                    openDisciplineWindow(discipline); // Отображаем информацию о дисциплине
+                });
+        
+                // Добавляем карточку в контейнер
+                subres.appendChild(button);
+            });
+        }
+		
+        function updateColorDiscipline(card, discipline) {
+            // Проверяем значение id_семестра и устанавливаем цвет
+            if (discipline.id_семестра === 2) {
+                card.style.backgroundColor = "rgba(12,168,54,1)"; // Зеленый цвет для id_семестра = 1
+            } else if (discipline.id_семестра === 1) {
+                card.style.backgroundColor = "rgba(255,162,0,1)"; // Оранжевый цвет для id_семестра = 0
+        }
+    }
+
+	function openDisciplineWindow(discipline) {
+		const extsubjects = document.getElementById("extsubjects");
+		const disciplineId = discipline.название_дисциплины;
+	
+		if (!disciplineData[disciplineId]) {
+			disciplineData[disciplineId] = {
+				teacher: null,
+				hours: {
+					lectures: discipline.Лекции || 0,
+					seminars: discipline.Практические || 0,
+					labs: discipline.Лабы || 0,
+				},
+				selected: {
+					lectures: false,
+					seminars: false,
+					labs: false,
+				},
+			};
+		}
+	
+		const disciplineState = disciplineData[disciplineId];
+	
+		extsubjects.innerHTML = `
+			<div class="tsextsubs">
+				<div class="extsubsname">${discipline.название_дисциплины}</div>
+			</div>
+			<div class="msextsubs">
+				<div class="lsmsextsubs">
+					<div class="lectures">Лекции</div>
+					<button class="addsub" id="addsublec_${disciplineId}">+</button>
+					<div class="groupextsubs" id="grouplec_${disciplineId}">${disciplineState.hours.lectures}</div>
+				</div>
+				<div class="csmsextsubs">
+					<div class="seminars">Семинары</div>
+					<button class="addsub" id="addsubsem_${disciplineId}">+</button>
+					<div class="groupextsubs" id="groupsem_${disciplineId}">${disciplineState.hours.seminars}</div>
+				</div>
+				<div class="rsmsextsubs">
+					<div class="labs">Лабораторные</div>
+					<button class="addsub" id="addsublab_${disciplineId}">+</button>
+					<div class="groupextsubs" id="grouplab_${disciplineId}">${disciplineState.hours.labs}</div>
+				</div>
+			</div>
+			<div class="bsextsubs">
+				<button class="accept" id="accept_${disciplineId}">Принять</button>
+				<button class="cancel">Отмена</button>
+			</div>
+		`;
+	
+		extsubjects.style.display = "flex";
+			
+		// Привязываем обработчики кнопок
+		document.getElementById(`addsublec_${disciplineId}`).addEventListener("click", () => {
+			attachTeacher(disciplineId, "lec");
+			disciplineState.selected.lectures = true;
+		});
+		document.getElementById(`addsubsem_${disciplineId}`).addEventListener("click", () => {
+			attachTeacher(disciplineId, "sem");
+			disciplineState.selected.seminars = true;
+		});
+		document.getElementById(`addsublab_${disciplineId}`).addEventListener("click", () => {
+			attachTeacher(disciplineId, "lab");
+			disciplineState.selected.labs = true;
+		});
+	
+		document.getElementById(`accept_${disciplineId}`).addEventListener("click", () => {
+			saveDisciplineData(disciplineId);
+		});
+	
+		document.querySelector(".cancel").addEventListener("click", () => {
+			extsubjects.style.display = "none";
+		});
+	}
+	
+	async function saveDisciplineData(disciplineId) {
+		const disciplineState = disciplineData[disciplineId];
+		const teacherSelect = document.getElementById('teacherSelect');
+		const selectedTeacher = teacherSelect.value;
+	
+		if (!selectedTeacher) {
+			alert('Пожалуйста, выберите преподавателя из списка!');
+			return;
+		}
+	
+		const payload = {
+			teacher: selectedTeacher,
+			disciplineId: disciplineId,
+			selected: disciplineState.selected,
+			hours: disciplineState.hours,
+		};
+		
+		console.log('Отправляемый payload:', payload);
+
+		const response = await fetch('/update_load', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(payload),
+		});
+		
+		if (response.ok) {
+			alert('Данные успешно обновлены');
+		} else {
+			alert('Ошибка обновления данных');
+		}
+		refreshTeacherCards();
+
+		const extsubjects = document.getElementById("extsubjects");
+		extsubjects.style.display = "none";
+	}
+
+	function attachTeacher(disciplineId, loadType) {
+		const teacherSelect = document.getElementById('teacherSelect');
+		const selectedTeacher = teacherSelect.value;
+	
+		if (!selectedTeacher) {
+			alert('Пожалуйста, выберите преподавателя из списка!');
+			return;
+		}
+	
+		const buttonId = `addsub${loadType}_${disciplineId}`;
+		
+		// Найдем соответствующие элементы
+		const buttonElement = document.getElementById(buttonId);
+	
+		if (buttonElement) {
+			// Изменяем текст кнопки на ФИО преподавателя
+			buttonElement.textContent = selectedTeacher;
+			buttonElement.disabled = true; // Можно заблокировать кнопку, если не нужно менять преподавателя повторно
+	
+			// Обновляем глобальные данные
+			disciplineData[disciplineId].teacher = selectedTeacher;
+		}
+	}
+
+	async function refreshTeacherCards() {
+		try {
+			// Делаем запрос к серверу для получения актуальных данных преподавателей
+			const response = await fetch('/get_teachers', {
+				method: 'GET',
+				headers: { 'Content-Type': 'application/json' }
+			});
+	
+			if (!response.ok) {
+				throw new Error('Ошибка при загрузке данных преподавателей');
+			}
+	
+			// Получаем данные от сервера
+			const teachers = data.teachers;
+	
+			// Обновляем выпадающий список преподавателей
+			updateTeacherList(teachers);
+	
+			// Отображаем карточки преподавателей
+			displayTeacherCards(teachers);
+	
+		} catch (error) {
+			console.error('Ошибка:', error);
+			alert('Не удалось обновить данные преподавателей');
+		}
+	}
+
+	// Загрузка файла преподов
+	document.getElementById('uploadButton_teachers').addEventListener('click', () => {
+            document.getElementById('fileInput_teachers').click();
+        });
+
+        document.getElementById('fileInput_teachers').addEventListener('change', async function() {
+            const file = this.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const response = await fetch('/upload_teachers', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+			
+			updateTeacherList(data.teachers);
+            displayTeacherCards(data.teachers);
+        });
+
+	// Функция для обновления выпадающего списка преподавателей
+	function updateTeacherList(teachers) {
+	const teacherSelect = document.getElementById('teacherSelect');
+	teacherSelect.innerHTML = '<option value="">Выберите преподавателя</option>';
+	teachers.forEach(teacher => {
+		const option = document.createElement('option');
+		option.value = teacher.ФИО;
+		option.textContent = teacher.ФИО;
+		teacherSelect.appendChild(option);
+		});
+	}
+
+
+
+
+	// Функция для отображения карточек преподавателей
+	function displayTeacherCards(teachers) {
+            const container = document.getElementById('cstlist');
+            container.innerHTML = '';
+
+            teachers.forEach(teacher => {
+                const teachcard = document.createElement('div');
+                teachcard.className = 'teachcard';
+                teachcard.dataset.name = teacher.ФИО; // Добавляем data-name атрибут
+
+                teachcard.innerHTML = `
+					<div class="lsteachcard" id = "lsteachcard">
+						<div class="teacherName" id = "teacherName">${teacher.ФИО}</div>  
+					</div> 
+					<div class="rsteachcard" id = "rsteachcard">
+						<div class="teacherhours" id = "teacherhours">${teacher.Назначено_часов || 0}/${teacher.Максимально_часов}</div>
+					</div> 
+                `;
+				
+
+				updateCardColor(teachcard, teacher);
+                container.appendChild(teachcard);
+            });
+        }
+
+
+	// Функция для обновления цвета карточки
+	function updateCardColor(teachcard, teacher) {
+            if (teacher.Назначено_часов < 0.95 * teacher.Максимально_часов) {
+                teachcard.style.background = 'linear-gradient(90deg, rgba(255,255,255,1) 50%, rgba(255,162,0,1) 100%, rgba(0,212,255,0) 100%)';  // Нагрузка ниже 95% максимума
+				teachcard.style.border = '2px solid rgba(255,162,0,1)'
+            } else if ((teacher.Назначено_часов > 0.95 * teacher.Максимально_часов) & (teacher.Назначено_часов <= teacher.Максимально_часов)) {
+                teachcard.style.background = 'linear-gradient(90deg, rgba(255,255,255,1) 50%, rgba(12,168,54,1) 100%, rgba(0,212,255,0) 100%)';  // Нагрузка более 95%, но не превышает максимальную
+				teachcard.style.border = '2px solid rgba(12,168,54,1)'
+            } else if (teacher.Назначено_часов > teacher.Максимально_часов) {
+                teachcard.style.background = 'linear-gradient(90deg, rgba(255,255,255,1) 50%, rgba(255,0,0,1) 100%, rgba(0,212,255,0) 100%)';  // Нагрузка превышает максимальное
+				teachcard.style.border = '2px solid rgba(255,0,0,1)'
+            } else {
+                teachcard.style.background = 'white'; // Если нагрузка в норме
+            }
+        }	
+
+	
+
+
+
+
+
+
+
+
+
+</script>
+</body>
+</html>

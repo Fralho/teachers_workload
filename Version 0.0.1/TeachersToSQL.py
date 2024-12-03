@@ -2,14 +2,14 @@ import pandas as pd
 import sqlite3
 
 # Path to the uploaded file
-filename = 'Преподаватели.xlsx'
+filename = '/Users/kalek/Desktop/Учеба/Информатика/Проект АЯП/Преподаватели.xlsx'
 
 # Load the Excel file
 data = pd.read_excel(filename)
 
 def teach_to_sql(data):
     # Connect to SQLite database (or create it if it doesn't exist)
-    conn = sqlite3.connect('Teachers.db')
+    conn = sqlite3.connect('/Users/kalek/Desktop/Учеба/Информатика/Проект АЯП/Teachers.db')
     cursor = conn.cursor()
 
     # Create the table with the required fields
