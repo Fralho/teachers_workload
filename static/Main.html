@@ -401,7 +401,7 @@ body {
 }
 
 .addsub {
-	height: 15%;
+	height: 20%;
 	width: 90%;
 	display: flex;
 	background-color: white;
@@ -428,7 +428,17 @@ body {
 	border: 2px solid rgb(18,5, 141);
 }
 
-
+.cancel {
+	height: calc(100%);
+	width: calc(20%);
+	margin-right: 10px;
+	border-radius: 30px;
+	font-family: 'bahnschrift';
+	font-size: 20px;
+	text-align: center;
+	color: rgb(18,5, 141);
+	border: 2px solid rgb(18,5, 141);
+}
 
 
 
@@ -548,6 +558,12 @@ body {
 }
 
 .accept:hover {
+	background-color: rgb(170, 204, 249);
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.cancel:hover {
 	background-color: rgb(170, 204, 249);
 	text-decoration: none;
 	cursor: pointer;
@@ -739,7 +755,7 @@ body {
             </div>
             <div class="ts">
                 <!--<button class="plus-button" id="tchoose">+</button>-->
-				<select class="plus-button" id="teacherSelect" style="padding: 5px; width: 200px;">
+				<select class="plus-button" id="teacherSelect" style="padding: 5px; width: 780px;">
 					<option value="">Выберите преподавателя</option>
 				</select>
                 <div class="tcard"></div>
@@ -979,12 +995,24 @@ document.getElementById('uploadButton_discipline').addEventListener('click', () 
         }
     }
 
-	function openDisciplineWindow(discipline) {
+	async function openDisciplineWindow(discipline) {
+		
+		const response = await fetch(`/update_disciplines?id_дисциплины=${discipline.id_дисциплины}`);
+
+		const data = await response.json();
+
 		const extsubjects = document.getElementById("extsubjects");
 		const disciplineId = discipline.название_дисциплины;
-	
+
+
+		 // Проверяем наличие закрепленных преподавателей
+		 const lecTeacher = data.П_Лекции ? await getTeacherById(data.П_Лекции) : null;
+		 const semTeacher = data.П_Семинары ? await getTeacherById(data.П_Семинары) : null;
+		 const labTeacher = data.П_Лабораторные ? await getTeacherById(data.П_Лабораторные) : null;
+
 		if (!disciplineData[disciplineId]) {
 			disciplineData[disciplineId] = {
+				id: discipline.id_дисциплины,
 				teacher: null,
 				hours: {
 					lectures: discipline.Лекции || 0,
@@ -1008,21 +1036,29 @@ document.getElementById('uploadButton_discipline').addEventListener('click', () 
 			<div class="msextsubs">
 				<div class="lsmsextsubs">
 					<div class="lectures">Лекции</div>
-					<button class="addsub" id="addsublec_${disciplineId}">+</button>
+					<button class="addsub" id="addsublec_${disciplineId}" ${lecTeacher ? 'disabled' : ''}>
+                    ${lecTeacher ? lecTeacher.teachers[0].ФИО : '+'}
+                	</button>
 					<div class="groupextsubs" id="grouplec_${disciplineId}">${disciplineState.hours.lectures}</div>
 				</div>
 				<div class="csmsextsubs">
 					<div class="seminars">Семинары</div>
-					<button class="addsub" id="addsubsem_${disciplineId}">+</button>
+					<button class="addsub" id="addsubsem_${disciplineId}" ${semTeacher ? 'disabled' : ''}>
+                    ${semTeacher ? semTeacher.teachers[0].ФИО : '+'}
+                	</button>
 					<div class="groupextsubs" id="groupsem_${disciplineId}">${disciplineState.hours.seminars}</div>
 				</div>
 				<div class="rsmsextsubs">
 					<div class="labs">Лабораторные</div>
-					<button class="addsub" id="addsublab_${disciplineId}">+</button>
+					<button class="addsub" id="addsublab_${disciplineId}" ${labTeacher ? 'disabled' : ''}>
+                    ${labTeacher ? labTeacher.teachers[0].ФИО : '+'}
+                	</button>
 					<div class="groupextsubs" id="grouplab_${disciplineId}">${disciplineState.hours.labs}</div>
 				</div>
 			</div>
 			<div class="bsextsubs">
+				<div class="group" id="group"></div>
+                <button class="groupbut" id="groupbut">Выбрать группу</button>
 				<button class="accept" id="accept_${disciplineId}">Принять</button>
 				<button class="cancel">Отмена</button>
 			</div>
@@ -1052,7 +1088,16 @@ document.getElementById('uploadButton_discipline').addEventListener('click', () 
 			extsubjects.style.display = "none";
 		});
 	}
-	
+
+	async function getTeacherById(teacherId) {
+		console.log('idteahc', teacherId);
+		const response = await fetch(`/get_teacher_by_id?id=${teacherId}`);
+		if (response.ok) {
+			return await response.json();
+		}
+		return null;
+	}
+
 	async function saveDisciplineData(disciplineId) {
 		const disciplineState = disciplineData[disciplineId];
 		const teacherSelect = document.getElementById('teacherSelect');
@@ -1063,28 +1108,33 @@ document.getElementById('uploadButton_discipline').addEventListener('click', () 
 			return;
 		}
 	
+		// Формируем данные для отправки
 		const payload = {
+			id: disciplineState.id,
 			teacher: selectedTeacher,
 			disciplineId: disciplineId,
-			selected: disciplineState.selected,
-			hours: disciplineState.hours,
+			selected: disciplineState.selected, // Какие кнопки нажаты
+			hours: disciplineState.hours,       // Часы нагрузки
 		};
-		
+	
 		console.log('Отправляемый payload:', payload);
-
+	
+		// Отправка на сервер
 		const response = await fetch('/update_load', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify(payload),
 		});
-		
+	
 		if (response.ok) {
 			alert('Данные успешно обновлены');
 		} else {
 			alert('Ошибка обновления данных');
 		}
+
 		refreshTeacherCards();
 
+		// Закрытие окна после успешного обновления
 		const extsubjects = document.getElementById("extsubjects");
 		extsubjects.style.display = "none";
 	}
@@ -1120,7 +1170,9 @@ document.getElementById('uploadButton_discipline').addEventListener('click', () 
 				method: 'GET',
 				headers: { 'Content-Type': 'application/json' }
 			});
-	
+			
+			const data = await response.json();
+
 			if (!response.ok) {
 				throw new Error('Ошибка при загрузке данных преподавателей');
 			}

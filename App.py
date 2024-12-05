@@ -74,11 +74,6 @@ def upload_discipline_file():
     conn = sqlite3.connect(DB_DISCIPLINE)
     cursor = conn.cursor()
 
-    # Drop tables if they already exist to reset them
-    cursor.execute('DROP TABLE IF EXISTS Семестры')
-    cursor.execute('DROP TABLE IF EXISTS Группы')
-    cursor.execute('DROP TABLE IF EXISTS Дисциплины')
-
     # Step 1: Create the "Семестры" table
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS Семестры (
@@ -114,9 +109,9 @@ def upload_discipline_file():
         id_семестра INTEGER,
         id_группы TEXT,
         {formatted_discipline_columns},
-        П_Лекции REAL,
-        П_Семинары REAL,
-        П_Лабораторные REAL,
+        П_Лекции INTEGER,
+        П_Семинары INTEGER,
+        П_Лабораторные INTEGER,
         FOREIGN KEY (id_семестра) REFERENCES Семестры(id_семестра)
     )
     ''')
@@ -130,9 +125,9 @@ def upload_discipline_file():
             group_id = cursor.fetchone()[0]
             group_ids.append(str(group_id))
         id_группы_str = ','.join(group_ids)
-        П_Лекции = row.get('П_Лекции', 0)
-        П_Семинары = row.get('П_Семинары', 0)
-        П_Лабораторные = row.get('П_Лабораторные', 0)
+        П_Лекции = row.get('П_Лекции')
+        П_Семинары = row.get('П_Семинары')
+        П_Лабораторные = row.get('П_Лабораторные')
         discipline_values = (row['Дисциплина'], id_семестра, id_группы_str) + tuple(row[3:].fillna("").tolist()) + (П_Лекции, П_Семинары, П_Лабораторные)
         
         cursor.execute(f'''
@@ -143,8 +138,8 @@ def upload_discipline_file():
     conn.commit()
 
     # Возвращаем данные из таблицы "Дисциплины" для отображения на клиенте
-    cursor.execute("SELECT название_дисциплины, Лекции, Практические, Лабы, id_семестра, П_Лекции, П_Семинары, П_Лабораторные FROM Дисциплины")
-    disciplines = [{'название_дисциплины': row[0], 'Лекции': row[1], 'Практические': row[2], 'Лабы': row[3], 'id_семестра': row[4], 'П_Лекции': row[5], 'П_Семинары': row[6], 'П_Лабораторные': row[7]} for row in cursor.fetchall()]
+    cursor.execute("SELECT id_дисциплины, название_дисциплины, Лекции, Практические, Лабы, id_семестра, П_Лекции, П_Семинары, П_Лабораторные FROM Дисциплины")
+    disciplines = [{'id_дисциплины': row[0], 'название_дисциплины': row[1], 'Лекции': row[2], 'Практические': row[3], 'Лабы': row[4], 'id_семестра': row[5], 'П_Лекции': row[6], 'П_Семинары': row[7], 'П_Лабораторные': row[8] } for row in cursor.fetchall()]
     conn.close()
 
     return jsonify({'disciplines': disciplines})
@@ -152,47 +147,54 @@ def upload_discipline_file():
 @app.route('/update_load', methods=['POST'])
 def update_load():
     data = request.json
-    teacher = data['teacher']
-    discipline_id = data['disciplineId']
+    id = data['id']
+    teacher_fio = data['teacher']
     selected = data['selected']
+    hours = data['hours']
 
-    # Преобразуем часы в float
-    hours = {key: float(value) for key, value in data['hours'].items()}
+    
+    # Получаем ID преподавателя
+    conn = sqlite3.connect(DB_TEACHERS)
+    cursor = conn.cursor()
+    cursor.execute("SELECT id FROM Преподаватели WHERE ФИО = ?", (teacher_fio,))
+    teacher_id = cursor.fetchone()
 
+    if not teacher_id:
+        return jsonify({'error': 'Преподаватель не найден'}), 400
+
+    teacher_id = teacher_id[0]
+    conn.close()
+
+    # Обновляем таблицу дисциплин
+    conn = sqlite3.connect(DB_DISCIPLINE)
+    cursor = conn.cursor()
+
+    if selected['lectures']:
+        cursor.execute("UPDATE Дисциплины SET П_Лекции = ? WHERE id_дисциплины = ?", (teacher_id, id))
+    if selected['seminars']:
+        cursor.execute("UPDATE Дисциплины SET П_Семинары = ? WHERE id_дисциплины = ?", (teacher_id, id))
+    if selected['labs']:
+        cursor.execute("UPDATE Дисциплины SET П_Лабораторные = ? WHERE id_дисциплины = ?", (teacher_id, id))
+
+    conn.commit()
+
+    # Обновляем нагрузку преподавателя
     conn = sqlite3.connect(DB_TEACHERS)
     cursor = conn.cursor()
 
-    # Получаем текущие данные преподавателя
-    cursor.execute("SELECT Лекции, Семинары, Лабораторные, Назначено_часов FROM Преподаватели WHERE ФИО = ?", (teacher,))
-    result = cursor.fetchone()
+    # Добавляем нагрузку
+    cursor.execute("SELECT Назначено_часов FROM Преподаватели WHERE id = ?", (teacher_id,))
+    current_load = cursor.fetchone()[0] or 0
 
-    if not result:
-        return jsonify({'error': 'Преподаватель не найден'}), 400
-
-    lectures = result[0].split(',') if result[0] else []
-    seminars = result[1].split(',') if result[1] else []
-    labs = result[2].split(',') if result[2] else []
-    current_load = float(result[3])  # Преобразуем текущую нагрузку в float
-
-    # Обновляем нагрузку
+    new_load = current_load
     if selected['lectures']:
-        lectures.append(str(discipline_id))
-        current_load += hours['lectures']
-
+        new_load += float(hours['lectures'])
     if selected['seminars']:
-        seminars.append(str(discipline_id))
-        current_load += hours['seminars']
-
+        new_load += float(hours['seminars'])
     if selected['labs']:
-        labs.append(str(discipline_id))
-        current_load += hours['labs']
+        new_load += float(hours['labs'])
 
-    # Обновляем преподавателя в базе данных
-    cursor.execute('''
-        UPDATE Преподаватели
-        SET Лекции = ?, Семинары = ?, Лабораторные = ?, Назначено_часов = ?
-        WHERE ФИО = ?
-    ''', (','.join(lectures), ','.join(seminars), ','.join(labs), current_load, teacher))
+    cursor.execute("UPDATE Преподаватели SET Назначено_часов = ? WHERE id = ?", (new_load, teacher_id))
 
     conn.commit()
     conn.close()
@@ -213,6 +215,36 @@ def get_teachers():
     conn.close()
 
     return jsonify({'teachers': teachers})
+
+@app.route('/get_teacher_by_id', methods=['GET'])
+def get_teacher_by_id():
+    teacher_id = request.args.get('id')
+    conn = sqlite3.connect(DB_TEACHERS)
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT id, ФИО FROM Преподаватели WHERE id = ?", (teacher_id,))
+    teachers = [
+        {'id': row[0], 'ФИО': row[1]}
+        for row in cursor.fetchall()
+    ]
+    conn.close()
+ 
+    return jsonify({'teachers': teachers})
+    
+
+@app.route('/update_disciplines', methods=['GET'])
+def update_disciplines():
+    discipline_id = request.args.get('id_дисциплины')
+    
+    conn = sqlite3.connect(DB_DISCIPLINE)
+    cursor = conn.cursor()
+    # Возвращаем данные из таблицы "Дисциплины" для отображения на клиенте
+    
+    cursor.execute("SELECT П_Лекции, П_Семинары, П_Лабораторные FROM Дисциплины WHERE id_дисциплины = ?", (discipline_id,))
+    row = cursor.fetchone()
+    conn.close()
+    
+    return jsonify({'П_Лекции': row[0], 'П_Семинары': row[1], 'П_Лабораторные': row[2]})
 
 if __name__ == '__main__':
     initialize_database()
